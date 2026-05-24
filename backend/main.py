@@ -16,7 +16,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="",
+        password="root",
         database="nodehire_db"
     )
 
@@ -53,3 +53,37 @@ def register_user(user: User):
         cursor.close()
         conn.close()
     return {"message": "User registered successfully"}
+class ProposalData(BaseModel):
+    job_description: str
+    proposal_text: str
+
+@app.post("/evaluate")
+async def evaluate_proposal(data: ProposalData):
+    score = 0
+    feedback = ""
+    
+    proposal_lower = data.proposal_text.lower()
+    job_lower = data.job_description.lower()
+
+    if len(proposal_lower) > 50:
+        score += 30
+    else:
+        feedback += "Proposal lacks detail. "
+
+    words = job_lower.split()
+    match_count = sum(1 for word in words if len(word) > 3 and word in proposal_lower)
+    
+    if match_count > 0:
+        score += 50
+        feedback += f"Strong keyword alignment ({match_count} matches). "
+    else:
+        feedback += "Missing core requirements. "
+        
+    score = min(score + 15, 98) 
+
+    if score > 80:
+        feedback += "Highly recommended candidate."
+    elif score > 50:
+        feedback += "Potential fit, requires interview."
+
+    return {"score": score, "feedback": feedback.strip()}
