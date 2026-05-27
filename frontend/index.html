@@ -2,32 +2,1176 @@
 <html>
 <head>
     <title>NodeHire</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .full-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+        }
+
+        .auth-box {
+            background: white;
+            color: #1e293b;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            display: none;
+        }
+
+        .auth-box h2 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+
+        .auth-box input {
+            width: calc(100% - 24px);
+            margin: 10px 0;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .role-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 280px;
+            transition: 0.2s;
+        }
+        
+        .role-btn:hover { background: #2563eb; transform: scale(1.05); }
+
+        nav {
+            background: #ffffff;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links button {
+            background: none;
+            color: #475569;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 15px;
+        }
+
+        .nav-links button:hover { color: #2563eb; }
+        
+        .page-section { display: none; }
+
+        h1 { color: #0f172a; text-align: center; font-size: 2.5rem; margin-bottom: 40px; }
+        h3 { color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 30px; }
+        input[type="text"] { width: calc(48% - 22px); padding: 12px; margin: 10px 2% 10px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; outline: none; }
+        input[type="text"]:focus { border-color: #3b82f6; }
+        
+        button.action-btn { background-color: #2563eb; color: white; border: none; padding: 12px 24px; cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 1rem; }
+        button.action-btn:hover { background-color: #1d4ed8; }
+        
+        ul { list-style-type: none; padding: 0; }
+        li { background: white; margin: 12px 0; padding: 16px 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    </style>
 </head>
 <body>
-    <h1>NodeHire</h1>
-    <input type="text" id="name" placeholder="Name">
-    <input type="text" id="email" placeholder="Email">
-    <button onclick="register()">Register User</button>
-    <div id="result"></div>
+
+    <div id="portal-selector" class="full-screen">
+        <h1 style="color: white; margin-bottom: 10px;">NodeHire</h1>
+        <p style="font-size: 1.2rem; margin-bottom: 40px; color: #94a3b8;">Select your entry point</p>
+        <button class="role-btn" onclick="showAuth('client')">🏢 Client Portal</button>
+        <button class="role-btn" onclick="showAuth('freelancer')" style="background: #10b981;">💻 Freelancer Portal</button>
+        <button class="role-btn" onclick="showAuth('both')" style="background: #8b5cf6;">🔄 Admin</button>
+    </div>
+
+    <div id="auth-screen-client" class="full-screen" style="display: none;">
+        <div class="auth-box" style="display: block;">
+            <h2>Client Login</h2>
+            <p style="color: #64748b; font-size: 0.9em;">Hire top talent for your projects.</p>
+            <input type="text" id="login-client-email" placeholder="Work Email">
+            <input type="password" placeholder="Password" style="width: calc(100% - 24px); margin: 10px 0; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <button class="action-btn" style="width: 100%; margin-top: 15px;" onclick="loginAs('client')">Secure Login</button>
+            <button onclick="backToPortal()" style="background:none; border:none; color:#64748b; margin-top:15px; cursor:pointer;">← Back</button>
+        </div>
+    </div>
+
+    <div id="auth-screen-freelancer" class="full-screen" style="display: none;">
+        <div class="auth-box" style="display: block;">
+            <h2 style="color: #10b981;">Freelancer Login</h2>
+            <p style="color: #64748b; font-size: 0.9em;">Find work and manage your earnings.</p>
+            <input type="text" id="login-freelancer-email" placeholder="Freelancer Email">
+            <input type="password" placeholder="Password" style="width: calc(100% - 24px); margin: 10px 0; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <button class="action-btn" style="width: 100%; margin-top: 15px; background: #10b981;" onclick="loginAs('freelancer')">Secure Login</button>
+            <button onclick="backToPortal()" style="background:none; border:none; color:#64748b; margin-top:15px; cursor:pointer;">← Back</button>
+        </div>
+    </div>
+
+    <div id="auth-screen-both" class="full-screen" style="display: none;">
+        <div class="auth-box" style="display: block;">
+            <h2 style="color: #8b5cf6;">Admin Access</h2>
+            <p style="color: #64748b; font-size: 0.9em;">Full platform overview for demonstrations.</p>
+            <input type="text" id="login-admin-email" placeholder="Admin ID">
+            <input type="password" placeholder="Password" style="width: calc(100% - 24px); margin: 10px 0; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <button class="action-btn" style="width: 100%; margin-top: 15px; background: #8b5cf6;" onclick="loginAs('both')">Enter Dashboard</button>
+            <button onclick="backToPortal()" style="background:none; border:none; color:#64748b; margin-top:15px; cursor:pointer;">← Back</button>
+        </div>
+    </div>
+
+    <nav id="main-nav">
+        <div style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">NodeHire <span id="nav-user-label" style="font-size: 0.5em; color: #64748b; font-weight: normal; margin-left: 10px;"></span></div>
+        <div class="nav-links" id="nav-buttons"></div>
+        <div>
+            <button onclick="openChat(currentUserRole === 'client' ? 'freelancer@demo.com' : 'client@demo.com')" style="background: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-right: 10px;">💬 Messages</button>
+            <button onclick="logout()" style="background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container" id="app-container" style="display: none;">
+        
+        <div id="client-post-job" class="page-section">
+            <h3>🏢 Post a New Project</h3>
+            <div style="background: #f8fafc; padding: 15px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="margin-top: 0; color: #4338ca;">✨ AI Project Scoper</h4>
+                <input type="text" id="vague-idea" placeholder="e.g., I need a cool website for my cafe..." style="width: 70%; border-color: #a5b4fc;">
+                <button class="action-btn" onclick="scopeProject()" style="background-color: #8b5cf6; padding: 10px 15px;">Auto-Fill Brief ✨</button>
+            </div>
+            <input type="text" id="job-title" placeholder="Project Title">
+            <input type="text" id="job-desc-full" placeholder="Project Description">
+            <input type="text" id="job-skills" placeholder="Required Skills">
+            <input type="text" id="job-budget" placeholder="Budget Range">
+            <input type="text" id="job-deadline" placeholder="Deadline">
+            <input type="text" id="job-type" placeholder="Project Type">
+            <button class="action-btn" onclick="postJob()" style="background-color: #0f172a;">Publish Project</button>
+            <div id="job-result" style="color: green; margin-top: 10px; font-weight: bold;"></div>
+        </div>
+
+        <div id="client-dashboard" class="page-section">
+            <h3>📊 Incoming Proposals</h3>
+            <button class="action-btn" onclick="fetchProposals()" style="background-color: #8b5cf6;">Scan Incoming Bids</button>
+            <ul id="client-proposals-list"></ul>
+            
+            <h3 style="margin-top: 50px;">💼 Active Projects & Escrow</h3>
+            <ul id="active-projects-list"></ul>
+        </div>
+
+        <div id="freelancer-board" class="page-section">
+            <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px; display: flex; justify-content: space-around; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                <div>
+                    <h4 style="margin: 0; color: #64748b; font-weight: 500;">Available for Withdrawal</h4>
+                    <h2 style="margin: 10px 0 0 0; color: #10b981; font-size: 2.2rem;">$<span id="available-funds">0</span></h2>
+                    <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #94a3b8;">After 10% Platform Fee</p>
+                </div>
+                <div style="border-left: 2px solid #e2e8f0;"></div>
+                <div>
+                    <h4 style="margin: 0; color: #64748b; font-weight: 500;">Pending in Escrow Sandbox</h4>
+                    <h2 style="margin: 10px 0 0 0; color: #f59e0b; font-size: 2.2rem;">$<span id="pending-funds">0</span></h2>
+                    <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #94a3b8;">Awaiting Client Approval</p>
+                </div>
+            </div>
+
+            <div style="padding: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin-bottom: 30px;">
+                <h4 style="margin-top: 0; color: #166534;">📁 Upload Portfolio & AI Skills</h4>
+                <input type="text" id="portfolio-skills" placeholder="Enter key skills (e.g. Python, SQL, React)" style="width: calc(100% - 24px); padding: 10px; margin-bottom: 10px; border: 1px solid #bbf7d0; border-radius: 5px;">
+                <input type="file" id="portfolio-file" style="margin-bottom: 10px; width: 100%;">
+                <br>
+                <button id="upload-btn" class="action-btn" onclick="uploadPortfolio()" style="background-color: #15803d; padding: 8px 15px;">Secure Upload & Verify</button>
+                <div id="upload-progress" style="display:none; height: 8px; background: #dcfce7; border-radius: 5px; margin-top: 15px; width: 60%;">
+                    <div id="upload-bar" style="width: 0%; height: 100%; background: #16a34a; border-radius: 5px; transition: width 0.2s;"></div>
+                </div>
+                <div id="upload-success" style="display:none; color: #15803d; font-weight: bold; margin-top: 10px;">✅ Portfolio Uploaded and Skills AI-Verified!</div>
+            </div>
+
+            <div id="verify-box" style="padding: 15px; background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 8px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h4 style="margin-top: 0; color: #0369a1;">🛡️ Freelancer Verification & Badges</h4>
+                    <input type="text" id="linkedin-url" placeholder="Paste LinkedIn URL" style="width: 250px;">
+                    <button id="verify-btn" class="action-btn" onclick="verifyIdentity()" style="background-color: #0284c7; padding: 10px 15px;">Verify Identity</button>
+                </div>
+                <div>
+                    <button class="action-btn" onclick="document.getElementById('assessment-modal').style.display='block'" style="background-color: #8b5cf6; padding: 10px 20px;">Take AI Skill Assessment</button>
+                </div>
+            </div>
+
+            <div id="skill-test-box" style="padding: 15px; background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 8px; margin-bottom: 30px;">
+                <h4 style="margin-top:0; color:#6d28d9;">🧠 AI Skill Verification Test</h4>
+                
+                <select id="skill-select" style="padding:10px; border-radius:5px; border:1px solid #cbd5e1; width:250px;">
+                <option value="React">React Developer</option>
+                <option value="Python">Python Developer</option>
+                <option value="SQL">SQL Specialist</option>
+                </select>
+                
+                <button class="action-btn" onclick="startSkillTest()" style="background:#7c3aed; margin-left:10px;">
+                Start AI Test
+                </button>
+                
+                <div id="skill-test-area" style="margin-top:20px; display:none;">
+                <p id="mcq-question"></p>
+                
+                <input type="text" id="mcq-answer" placeholder="Your answer"
+                style="width:60%; padding:10px; border-radius:5px; border:1px solid #cbd5e1;">
+                
+                <p id="practical-question" style="margin-top:20px;"></p>
+                
+                <textarea id="practical-answer"
+                placeholder="Write your practical solution..."
+                style="width:100%; height:100px; padding:10px; border-radius:5px; border:1px solid #cbd5e1;"></textarea>
+                
+                <button class="action-btn" onclick="submitSkillTest()"
+                style="margin-top:15px; background:#6d28d9;">
+                Submit Test
+                </button>
+                </div>
+                
+                <div id="badge-result" style="margin-top:15px;"></div>
+            </div>
+
+            <div style="padding:20px; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; margin-bottom:30px;">
+                <h3 style="margin-top:0;">👤 Rich Portfolio Profile</h3>
+                <input type="text" id="profile-bio" placeholder="Professional Bio" style="width:100%; margin-bottom:10px;">
+                <input type="text" id="profile-skills" placeholder="Skills">
+                <input type="text" id="profile-rate" placeholder="Hourly Rate">
+                <input type="text" id="profile-availability" placeholder="Availability Status">
+                <input type="text" id="profile-education" placeholder="Education">
+                <input type="text" id="profile-experience" placeholder="Work Experience" style="width:100%;">
+                
+                <button class="action-btn" onclick="saveProfile()" style="margin-top:10px; background:#2563eb;">
+                Save Profile
+                </button>
+                
+                <div id="profile-save-msg" style="display:none; color:#16a34a; font-weight:bold; margin-top:10px;">
+                ✅ Portfolio Profile Saved
+                </div>
+            </div>
+
+            <div style="padding:20px; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; margin-bottom:30px;">
+                <h3 style="margin-top:0;">🖼️ Portfolio Gallery</h3>
+                <input type="text" id="project-title" placeholder="Project Title">
+                <input type="text" id="project-category" placeholder="Project Category">
+                <input type="text" id="project-tech" placeholder="Tech Stack Used">
+                <input type="text" id="project-link" placeholder="Live Project Link">
+                <input type="text" id="project-description" placeholder="Project Description" style="width:100%;">
+                <input type="file" id="project-image" style="margin-top:10px;">
+                
+                <button class="action-btn" onclick="addProject()" style="margin-top:15px; background:#7c3aed;">
+                Add Project
+                </button>
+                
+                <button class="action-btn" onclick="reviewPortfolioAI()" style="margin-top:15px; background:#f59e0b;">
+                🤖 Analyze Portfolio with AI
+                </button>
+                
+                <div id="portfolio-gallery" style="margin-top:20px;"></div>
+                <div id="portfolio-ai-review" style="margin-top:20px;"></div>
+            </div>
+
+            <h3>💼 Live Job Board</h3>
+            <button class="action-btn" onclick="fetchJobs()" style="background-color: #10b981;">Refresh Job Board</button>
+            <ul id="live-jobs-list"></ul>
+
+            <div id="apply-box" style="display: none; padding: 15px; background: #f1f5f9; border-radius: 8px; margin-top: 15px; border: 1px solid #cbd5e1;">
+                <h4>Submit Proposal for Job ID: <span id="target-job-id"></span></h4>
+                <input type="text" id="freelancer-email" placeholder="Your Email">
+                <input type="text" id="bid-amount" placeholder="Your Bid">
+                <input type="text" id="cover-letter" placeholder="Cover Letter" style="width: 100%;">
+                <button class="action-btn" onclick="sendProposal()" style="background-color: #3b82f6; margin-top: 10px;">Send Proposal</button>
+                <div id="proposal-result" style="color: green; margin-top: 10px; font-weight: bold;"></div>
+            </div>
+        </div>
+
+        <div id="freelancer-community" class="page-section">
+            <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🌐 Freelancer Hub</h2>
+
+            <div style="background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; padding: 25px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);">
+                <h3 style="margin-top:0; color: white; border: none;">🏆 Weekly Skill Challenge</h3>
+                <p style="font-size: 1.1rem;"><strong>This Week:</strong> Build a local RAG architecture or Data Visualization pipeline.</p>
+                <button class="action-btn" style="background: white; color: #3b82f6; font-weight: bold;" onclick="alert('Challenge submission received! Winner announced Friday.')">Submit Your Repo</button>
+                <div style="margin-top: 15px; font-size: 0.9em; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px;">
+                    ⭐ <strong>Last Week's Winner:</strong> Alex M. (Featured for: Python FastAPI Backend)
+                </div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <h3 style="margin-top:0; color: #0f172a; border: none;">🤝 Mentorship Matching</h3>
+                <p style="color: #64748b; margin-bottom: 15px;">Book sessions with experienced freelancers to level up your career.</p>
+                <div style="display: flex; gap: 15px; overflow-x: auto;">
+                    <div style="border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; min-width: 220px; text-align: center;">
+                        <strong style="font-size: 1.1rem;">Sarah K.</strong><br>Senior Python/AI Dev<br>
+                        <span style="display: inline-block; background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; margin: 8px 0;">Free 30m Session</span><br>
+                        <button class="action-btn" style="width:100%; padding: 8px;" onclick="alert('Mentorship request sent to Sarah!')">Book Session</button>
+                    </div>
+                    <div style="border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; min-width: 220px; text-align: center;">
+                        <strong style="font-size: 1.1rem;">David J.</strong><br>System Architecture<br>
+                        <span style="display: inline-block; background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; margin: 8px 0;">$50/hr</span><br>
+                        <button class="action-btn" style="width:100%; padding: 8px; background: #64748b;" onclick="alert('Opening secure payment portal for booking...')">Book Session</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <h3 style="margin-top:0; color: #0f172a; border: none;">📢 Community Feed</h3>
+                <p style="color: #64748b; margin-bottom: 15px;">Share tips, wins, and resources with the network.</p>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="feed-input" placeholder="What's your latest win or tip?" style="width: 100%; margin: 0;">
+                    <button class="action-btn" style="background: #10b981;" onclick="postToFeed()">Share</button>
+                </div>
+                <div id="feed-posts" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                        <strong>Elena:</strong> Just landed my first big contract! Don't give up on sending those proposals. 🎉
+                    </div>
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                        <strong>Marcus:</strong> Resource: If you're struggling with DB queries, always test your JOINs locally before writing the API routes. Saved me hours today.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     <script>
-        async function register() {
-            const data = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                password_hash: "pass123",
-                role: "Freelancer"
-            };
+        let currentUserRole = '';
+        let currentUserEmail = '';
+        let activeChatEmail = '';
 
-            const response = await fetch('http://127.0.0.1:8000/register', {
+        function getFinancials(email) {
+            let saved = localStorage.getItem('nodehire_financials_' + email);
+            if(saved) return JSON.parse(saved);
+            return { available: 0, pending: 0 };
+        }
+
+        function saveFinancials(email, data) {
+            localStorage.setItem('nodehire_financials_' + email, JSON.stringify(data));
+            if(currentUserRole === 'freelancer' || currentUserRole === 'both') {
+                updateEarningsUI();
+            }
+        }
+
+        function updateEarningsUI() {
+            let data = getFinancials(currentUserEmail);
+            document.getElementById('available-funds').innerText = data.available;
+            document.getElementById('pending-funds').innerText = data.pending;
+        }
+
+        function showAuth(role) {
+            document.getElementById('portal-selector').style.display = 'none';
+            document.getElementById('auth-screen-client').style.display = 'none';
+            document.getElementById('auth-screen-freelancer').style.display = 'none';
+            document.getElementById('auth-screen-both').style.display = 'none';
+            
+            if(role === 'client') {
+                document.getElementById('auth-screen-client').style.display = 'flex';
+            } else if(role === 'freelancer') {
+                document.getElementById('auth-screen-freelancer').style.display = 'flex';
+            } else {
+                document.getElementById('auth-screen-both').style.display = 'flex';
+            }
+        }
+
+        function backToPortal() {
+            document.getElementById('auth-screen-client').style.display = 'none';
+            document.getElementById('auth-screen-freelancer').style.display = 'none';
+            document.getElementById('auth-screen-both').style.display = 'none';
+            document.getElementById('portal-selector').style.display = 'flex';
+        }
+
+        let currentUserId = 1;
+        function loginAs(role) {
+            currentUserRole = role;
+            
+            if(role === 'client') {
+                currentUserEmail = document.getElementById('login-client-email').value || 'client@demo.com';
+            } else if(role === 'freelancer') {
+                currentUserEmail = document.getElementById('login-freelancer-email').value || 'freelancer@demo.com';
+                document.getElementById('freelancer-email').value = currentUserEmail; 
+            } else {
+                currentUserEmail = document.getElementById('login-admin-email').value || 'admin@demo.com';
+            }
+
+            document.getElementById('nav-user-label').innerText = `(${currentUserEmail})`;
+
+            document.getElementById('auth-screen-client').style.display = 'none';
+            document.getElementById('auth-screen-freelancer').style.display = 'none';
+            document.getElementById('auth-screen-both').style.display = 'none';
+            document.getElementById('main-nav').style.display = 'flex';
+            document.getElementById('app-container').style.display = 'block';
+            
+            let navBtns = document.getElementById('nav-buttons');
+            navBtns.innerHTML = '';
+            
+            if(role === 'client') {
+                navBtns.innerHTML = `
+                    <button onclick="showPage('client-post-job')">Post a Job</button>
+                    <button onclick="showPage('client-dashboard')">Manage Projects</button>
+                `;
+                showPage('client-dashboard');
+            } else if(role === 'freelancer') {
+                navBtns.innerHTML = `
+                    <button onclick="showPage('freelancer-board')">Find Work</button>
+                    <button onclick="showPage('freelancer-community')">Community Hub</button>
+                `;
+                showPage('freelancer-board');
+                updateEarningsUI();
+            } else {
+                navBtns.innerHTML = `
+                    <button onclick="showPage('client-post-job')">Post Job</button>
+                    <button onclick="showPage('client-dashboard')">Client Dash</button>
+                    <button onclick="showPage('freelancer-board')">Freelancer Dash</button>
+                    <button onclick="showPage('freelancer-community')">Community Hub</button>
+                `;
+                showPage('client-dashboard');
+                updateEarningsUI();
+            }
+        }
+
+        function logout() {
+            currentUserRole = '';
+            currentUserEmail = '';
+            document.getElementById('main-nav').style.display = 'none';
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('portal-selector').style.display = 'flex';
+        }
+
+        function showPage(pageId) {
+            let pages = document.getElementsByClassName('page-section');
+            for(let i=0; i<pages.length; i++) {
+                pages[i].style.display = 'none';
+            }
+            document.getElementById(pageId).style.display = 'block';
+        }
+
+        function verifyIdentity() {
+            let input = document.getElementById('linkedin-url').value.toLowerCase();
+            if(!input.includes("linkedin.com") && !input.includes(".edu")) {
+                alert("Access Denied: Please provide a valid LinkedIn URL or .edu Student Email.");
+                return;
+            }
+            let btn = document.getElementById('verify-btn');
+            btn.innerHTML = "✅ Verified";
+            btn.style.backgroundColor = "#10b981";
+            btn.disabled = true;
+            document.getElementById('linkedin-url').disabled = true;
+        }
+
+        function uploadPortfolio() {
+            let fileInput = document.getElementById('portfolio-file');
+            let skillsInput = document.getElementById('portfolio-skills').value;
+            
+            if(!fileInput.files || fileInput.files.length === 0) {
+                alert("Please select a file first.");
+                return;
+            }
+            
+            let fileName = fileInput.files[0].name;
+            localStorage.setItem('nodehire_portfolio_' + currentUserEmail, fileName);
+            if(skillsInput) {
+                localStorage.setItem('nodehire_skills_' + currentUserEmail, skillsInput);
+            }
+
+            document.getElementById('upload-btn').disabled = true;
+            let progress = document.getElementById('upload-progress');
+            let bar = document.getElementById('upload-bar');
+            let success = document.getElementById('upload-success');
+            
+            progress.style.display = 'block';
+            success.style.display = 'none';
+            bar.style.width = '0%';
+            
+            let width = 0;
+            let interval = setInterval(() => {
+                width += 20;
+                bar.style.width = width + '%';
+                if(width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        success.style.display = 'block';
+                        document.getElementById('upload-btn').innerText = "Update Portfolio";
+                        document.getElementById('upload-btn').disabled = false;
+                    }, 300);
+                }
+            }, 200);
+        }
+
+        function scopeProject() {
+            let idea = document.getElementById('vague-idea').value.toLowerCase();
+            
+            if(!idea || idea === "✨ ai scoped successfully!") {
+                alert("Please type a vague idea first!");
+                document.getElementById('vague-idea').value = "";
+                return;
+            }
+
+            let title, desc, skills, budget, deadline, type;
+
+            if (idea.includes("logo") || idea.includes("design") || idea.includes("brand")) {
+                title = "Brand Identity & Logo Design";
+                desc = "Need a modern, minimalist logo and brand guidelines for a new e-commerce startup.";
+                skills = "Figma, Adobe Illustrator, Graphic Design";
+                budget = "300 - 500";
+                deadline = "7 Days";
+                type = "Fixed Price";
+            } else if (idea.includes("app") || idea.includes("mobile") || idea.includes("ios") || idea.includes("android")) {
+                title = "Cross-Platform Mobile App";
+                desc = "Looking for a developer to build a mobile app with user authentication and push notifications.";
+                skills = "React Native, Flutter, Firebase, UI/UX";
+                budget = "2000 - 4000";
+                deadline = "30 Days";
+                type = "Milestone";
+            } else if (idea.includes("data") || idea.includes("ai") || idea.includes("machine learning") || idea.includes("rag")) {
+                title = "AI & Machine Learning Pipeline";
+                desc = "Need a data scientist to build a predictive model and local RAG architecture based on our dataset.";
+                skills = "Python, Pandas, Scikit-Learn, TensorFlow";
+                budget = "1500 - 3000";
+                deadline = "21 Days";
+                type = "Fixed Price";
+            } else {
+                title = "Full-Stack Web App Development";
+                desc = "Need a backend developer to build a robust database architecture and secure API endpoints.";
+                skills = "Python, FastAPI, MySQL, API Design";
+                budget = "1000 - 1500";
+                deadline = "14 Days";
+                type = "Fixed Price";
+            }
+
+            document.getElementById('job-title').value = title;
+            document.getElementById('job-desc-full').value = desc;
+            document.getElementById('job-skills').value = skills;
+            document.getElementById('job-budget').value = budget;
+            document.getElementById('job-deadline').value = deadline;
+            document.getElementById('job-type').value = type;
+            
+            document.getElementById('vague-idea').value = "✨ AI Scoped Successfully!";
+        }
+
+        async function postJob() {
+            const data = {
+                client_id: currentUserId,
+                title: document.getElementById('job-title').value,
+                description: document.getElementById('job-desc-full').value,
+                required_skills: document.getElementById('job-skills').value,
+                budget_range: document.getElementById('job-budget').value,
+                deadline: document.getElementById('job-deadline').value,
+                project_type: document.getElementById('job-type').value
+            };
+            const response = await fetch('http://127.0.0.1:8000/post-job', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-
             const result = await response.json();
-            document.getElementById('result').innerText = result.message;
+            document.getElementById('job-result').innerText = result.message;
         }
+
+        async function fetchJobs() {
+            const response = await fetch('http://127.0.0.1:8000/jobs');
+            const jobs = await response.json();
+            const listElement = document.getElementById('live-jobs-list');
+            listElement.innerHTML = ''; 
+            jobs.forEach(job => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <div>
+                        <strong>Job #${job.id}: ${job.title}</strong><br>
+                        <span style="font-size: 0.85em; color: #64748b;">Budget: ${job.budget_range} | Type: ${job.project_type}</span>
+                    </div>
+                    <button class="action-btn" onclick="openApplyBox(${job.id})" style="background-color: #f59e0b; padding: 6px 12px; font-size: 0.85em;">Apply</button>
+                `;
+                listElement.appendChild(listItem);
+            });
+        }
+
+        function openApplyBox(jobId) {
+            document.getElementById('apply-box').style.display = 'block';
+            document.getElementById('target-job-id').innerText = jobId;
+            document.getElementById('proposal-result').innerText = "";
+        }
+
+        async function sendProposal() {
+            const data = {
+                job_id: parseInt(document.getElementById('target-job-id').innerText),
+                freelancer_email: document.getElementById('freelancer-email').value,
+                bid_amount: document.getElementById('bid-amount').value,
+                cover_letter: document.getElementById('cover-letter').value
+            };
+            const response = await fetch('http://127.0.0.1:8000/submit-proposal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            document.getElementById('proposal-result').innerText = result.message;
+        }
+
+        async function fetchProposals() {
+            const response = await fetch('http://127.0.0.1:8000/proposals');
+            const proposals = await response.json();
+            const listElement = document.getElementById('client-proposals-list');
+            listElement.innerHTML = ''; 
+            const demoJobDescription = "Need a Python dev to connect a MySQL database using FastAPI.";
+
+            proposals.forEach(async (prop) => {
+                const aiResponse = await fetch('http://127.0.0.1:8000/evaluate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        job_description: demoJobDescription,
+                        proposal_text: prop.cover_letter
+                    })
+                });
+                const aiData = await aiResponse.json();
+                const listItem = document.createElement('li');
+                listItem.style.marginBottom = '20px';
+                listItem.innerHTML = `
+                    <div style="width: 100%; position: relative; padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
+                        <strong>For Job #${prop.job_id}</strong> | Bid: <span style="color: #10b981; font-weight: bold;">${prop.bid_amount}</span><br>
+                        <span style="font-size: 0.85em; color: #64748b;">From: ${prop.freelancer_email}</span>
+                        <div style="position: absolute; top: 15px; right: 15px; background: #e0e7ff; color: #4338ca; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
+                            🤖 Match: ${aiData.score}%
+                        </div>
+                        <div style="margin-top: 12px; padding: 10px; background: #f8fafc; border-left: 3px solid #3b82f6; font-size: 0.9em;">
+                            "${prop.cover_letter}"
+                            <div style="margin-top: 10px; color: #d97706; font-size: 0.85em; font-weight: 500;">
+                                <i>AI Analysis: ${aiData.feedback}</i>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button onclick="shortlist(this, '${prop.freelancer_email}', '${prop.bid_amount}', '${prop.job_id}')" style="background-color: #f59e0b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">⭐ Shortlist Candidate</button>
+                            <button onclick="viewPortfolio('${prop.freelancer_email}')" style="display: inline-block; background-color: #8b5cf6; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">📂 View Portfolio</button>
+                        </div>
+                    </div>
+                `;
+                listElement.appendChild(listItem);
+            });
+        }
+
+        function shortlist(btn, email, amount, jobId) {
+            btn.innerHTML = "✅ Shortlisted";
+            btn.style.backgroundColor = "#10b981";
+            btn.disabled = true; 
+            let hireBtn = document.createElement("button");
+            hireBtn.innerHTML = "🤝 Hire & Escrow";
+            hireBtn.style.backgroundColor = "#2563eb";
+            hireBtn.style.color = "white";
+            hireBtn.style.border = "none";
+            hireBtn.style.padding = "8px 15px";
+            hireBtn.style.borderRadius = "5px";
+            hireBtn.style.cursor = "pointer";
+            hireBtn.style.fontWeight = "bold";
+            hireBtn.style.marginLeft = "10px";
+            hireBtn.onclick = function() { initHireProcess(email, amount, jobId, btn.parentElement.parentElement); };
+            btn.parentElement.appendChild(hireBtn);
+        }
+
+        function viewPortfolio(email) {
+            document.getElementById('port-email').innerText = email + "'s Verified Portfolio";
+            
+            let customFile = localStorage.getItem('nodehire_portfolio_' + email);
+            let customSkills = localStorage.getItem('nodehire_skills_' + email) || "Python, Java, SQL, Machine Learning";
+            
+            let fileHTML = customFile ? `<p>📁 <strong>Uploaded Document:</strong> <a href="javascript:void(0)" onclick="alert('🔒 Secure Gateway: Fetching signed S3 URL for \\n${customFile}\\n\\nDownload authorized and logged.')" style="color: #3b82f6; text-decoration: underline;">${customFile}</a></p>` : `<p>📁 <strong>Top Project:</strong> FinTech API Pipeline <a href="#" style="color: #3b82f6;">(View Live)</a></p>`;
+            
+            document.getElementById('portfolio-dynamic-content').innerHTML = `
+                <p>🛡️ <strong>AI Verified Skills:</strong> ${customSkills}</p>
+                <p><strong>👤 Bio:</strong> ${localStorage.getItem('profile_bio') || 'Full Stack Freelancer specializing in scalable applications.'}</p>
+                <p><strong>💵 Hourly Rate:</strong> ${localStorage.getItem('profile_rate') || '$40/hr'}</p>
+                <p><strong>🟢 Availability:</strong> ${localStorage.getItem('profile_availability') || 'Available Full Time'}</p>
+                <p><strong>🎓 Education:</strong> ${localStorage.getItem('profile_education') || 'B.E Computer Science'}</p>
+                <p><strong>💼 Experience:</strong> ${localStorage.getItem('profile_experience') || '3+ Years Freelancing Experience'}</p>
+                ${fileHTML}
+                <p>📈 <strong>Platform Success Rate:</strong> 98%</p>
+                <div style="margin-top:15px;">
+                    <h4 style="margin-bottom:10px;">⭐ Client Reviews</h4>
+                    <div style="background:#f8fafc; padding:10px; border-radius:6px; margin-bottom:8px;">
+                        “Delivered ahead of schedule and communication was excellent.”
+                        <br><span style="color:#f59e0b;">★★★★★</span>
+                    </div>
+                    <div style="background:#f8fafc; padding:10px; border-radius:6px; margin-bottom:8px;">
+                        “Strong React skills and handled revisions professionally.”
+                        <br><span style="color:#f59e0b;">★★★★☆</span>
+                    </div>
+                    <div style="background:#f8fafc; padding:10px; border-radius:6px;">
+                        “Very responsive freelancer with clean backend architecture.”
+                        <br><span style="color:#f59e0b;">★★★★★</span>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('portfolio-modal').style.display = 'block';
+        }
+
+        let pendingHireData = null;
+
+        function initHireProcess(email, amount, jobId, cardElement) {
+            let numAmount = parseInt(amount.replace(/[^0-9]/g, ''));
+            if(isNaN(numAmount)) numAmount = 1000;
+            let fee = Math.floor(numAmount * 0.10);
+            let total = numAmount + fee;
+            
+            document.getElementById('checkout-bid').innerText = numAmount;
+            document.getElementById('checkout-fee').innerText = fee;
+            document.getElementById('checkout-total').innerText = total;
+            
+            document.getElementById('stripe-card-num').value = '';
+            document.getElementById('stripe-btn').innerHTML = `Pay $${total} securely`;
+            document.getElementById('stripe-btn').style.background = '#6366f1';
+            
+            pendingHireData = { email, numAmount, jobId, cardElement, total };
+            document.getElementById('checkout-modal').style.display = 'block';
+        }
+
+        function processStripePayment() {
+            let cardNum = document.getElementById('stripe-card-num').value;
+            if(cardNum.length < 15) {
+                alert("Please enter a valid test card number (e.g. 4242 4242...)");
+                return;
+            }
+            
+            let btn = document.getElementById('stripe-btn');
+            btn.innerHTML = "Processing...";
+            btn.style.background = "#94a3b8";
+            
+            setTimeout(() => {
+                btn.innerHTML = "✅ Payment Successful";
+                btn.style.background = "#10b981";
+                setTimeout(() => {
+                    finalizeHire();
+                }, 800);
+            }, 1500);
+        }
+
+        function finalizeHire() {
+            document.getElementById('checkout-modal').style.display = 'none';
+            let { email, numAmount, jobId, cardElement, total } = pendingHireData;
+            
+            let fins = getFinancials(email);
+            fins.pending += numAmount;
+            saveFinancials(email, fins);
+
+            cardElement.remove();
+            let activeList = document.getElementById('active-projects-list');
+            let activeCard = document.createElement('li');
+            activeCard.id = 'active-card-' + jobId;
+            activeCard.style.marginBottom = '20px';
+            activeCard.innerHTML = `
+                <div style="padding: 15px; border: 2px solid #2563eb; border-radius: 8px; background: #eff6ff; position: relative;">
+                    <button onclick="bookmarkFreelancer(this)" style="position: absolute; top: 15px; right: 15px; background: white; border: 1px solid #cbd5e1; border-radius: 5px; cursor: pointer; padding: 5px 10px; font-size: 1.2em; transition: 0.2s;">🔖</button>
+                    <strong style="color: #1e3a8a; font-size: 1.1em;">Job #${jobId} - Active Contract</strong><br>
+                    <span style="font-size: 0.9em; color: #475569;">Freelancer: ${email}</span><br>
+                    <span style="font-size: 0.9em; color: #475569;">Escrow Sandbox: <span style="color: #059669; font-weight: bold;">$${total} Secured</span></span>
+                    
+                    <div style="margin-top: 15px; padding: 10px; background: white; border-radius: 5px; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <strong style="color: #334155;">Status:</strong> <span id="status-${jobId}" style="color: #d97706; font-weight: bold;">In Progress ⏳</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button onclick="openChat('${email}')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8em; font-weight: bold;">💬 Chat</button>
+
+                            ${currentUserRole === 'freelancer' ? `
+                            <button onclick="document.getElementById('deliverable-upload-${jobId}').click()"
+                            style="background:#8b5cf6; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:0.8em; font-weight:bold;">
+                            📤 Upload Deliverable
+                            </button>` : ''}
+
+                            ${currentUserRole === 'freelancer' ? `
+                            <input type="file"
+                            id="deliverable-upload-${jobId}"
+                            style="display:none;"
+                            onchange="uploadDeliverable(${jobId}, ${numAmount}, '${email}')">
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <hr style="border:0; border-top: 1px solid #bfdbfe; margin: 15px 0;">
+                    
+                    <div id="action-bar-${jobId}" style="display: flex; gap: 10px; align-items: center;">
+                        ${currentUserRole === 'client' || currentUserRole === 'both' ? `
+                        <button id="pay-btn-${jobId}" disabled style="background: #94a3b8; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: not-allowed; font-weight: bold;">Release Escrow Payment</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            activeList.appendChild(activeCard);
+        }
+
+        function simulateSubmission(jobId, numAmount, email) {
+            let statusText = document.getElementById('status-' + jobId);
+            statusText.innerHTML = "Deliverable Submitted 📦";
+            statusText.style.color = "#2563eb";
+            let payBtn = document.getElementById('pay-btn-' + jobId);
+            payBtn.disabled = false;
+            payBtn.style.background = "#10b981";
+            payBtn.style.cursor = "pointer";
+            payBtn.onclick = function() { releasePayment(jobId, numAmount, email); };
+        }
+
+        function releasePayment(jobId, numAmount, email) {
+            let fins = getFinancials(email);
+            fins.pending -= numAmount;
+            fins.available += numAmount;
+            saveFinancials(email, fins);
+
+            let payBtn = document.getElementById('pay-btn-' + jobId);
+            payBtn.innerHTML = "✅ Payment Released";
+            payBtn.disabled = true;
+            let statusText = document.getElementById('status-' + jobId);
+            statusText.innerHTML = "Contract Completed 🏆";
+            statusText.style.color = "#10b981";
+            let actionBar = document.getElementById('action-bar-' + jobId);
+            let ratingSelect = document.createElement("select");
+            ratingSelect.style.padding = "7px";
+            ratingSelect.style.borderRadius = "5px";
+            ratingSelect.style.border = "1px solid #cbd5e1";
+            ratingSelect.innerHTML = `
+                <option value="" disabled selected>Rate out of 10...</option>
+                <option value="10">10/10 - Flawless</option>
+                <option value="9">9/10 - Excellent</option>
+                <option value="8">8/10 - Great</option>
+                <option value="7">7/10 - Good</option>
+                <option value="6">6/10 - Average</option>
+            `;
+            let submitReview = document.createElement("button");
+            submitReview.innerHTML = "Submit Review";
+            submitReview.style.background = "#8b5cf6";
+            submitReview.style.color = "white";
+            submitReview.style.border = "none";
+            submitReview.style.padding = "8px 15px";
+            submitReview.style.borderRadius = "5px";
+            submitReview.style.cursor = "pointer";
+            submitReview.onclick = function() {
+                if(ratingSelect.value) {
+                    this.innerHTML = "⭐ " + ratingSelect.value + "/10 Recorded";
+                    this.style.background = "#475569";
+                    this.disabled = true;
+                    ratingSelect.disabled = true;
+                } else {
+                    alert("Please select a rating from the dropdown first.");
+                }
+            };
+            actionBar.appendChild(ratingSelect);
+            actionBar.appendChild(submitReview);
+        }
+
+        function bookmarkFreelancer(btn) {
+            btn.innerHTML = "🔖 Saved";
+            btn.style.background = "#fef08a";
+            btn.style.color = "#ca8a04";
+            btn.style.borderColor = "#eab308";
+            btn.disabled = true;
+        }
+
+        function saveProfile() {
+            localStorage.setItem('profile_bio', document.getElementById('profile-bio').value);
+            localStorage.setItem('profile_skills', document.getElementById('profile-skills').value);
+            localStorage.setItem('profile_rate', document.getElementById('profile-rate').value);
+            localStorage.setItem('profile_availability', document.getElementById('profile-availability').value);
+            localStorage.setItem('profile_education', document.getElementById('profile-education').value);
+            localStorage.setItem('profile_experience', document.getElementById('profile-experience').value);
+            document.getElementById('profile-save-msg').style.display = 'block';
+        }
+
+        function addProject() {
+            let title = document.getElementById('project-title').value;
+            let category = document.getElementById('project-category').value;
+            let tech = document.getElementById('project-tech').value;
+            let link = document.getElementById('project-link').value;
+            let desc = document.getElementById('project-description').value;
+            let gallery = document.getElementById('portfolio-gallery');
+            let card = document.createElement('div');
+            card.style.background = '#f8fafc';
+            card.style.padding = '15px';
+            card.style.borderRadius = '10px';
+            card.style.marginBottom = '15px';
+            card.style.border = '1px solid #e2e8f0';
+            card.innerHTML = `
+                <h4 style="margin-top:0;">${title}</h4>
+                <p><strong>📂 Category:</strong> ${category}</p>
+                <p><strong>⚙️ Tech Used:</strong> ${tech}</p>
+                <p><strong>📝 Description:</strong> ${desc}</p>
+                <a href="${link}" target="_blank"
+                style="color:#2563eb; font-weight:bold;">
+                🔗 Live Project
+                </a>
+            `;
+            gallery.appendChild(card);
+        }
+
+        function reviewPortfolioAI() {
+            let projects = document.querySelectorAll('#portfolio-gallery div');
+            let reviewBox = document.getElementById('portfolio-ai-review');
+            if(projects.length === 0) {
+                reviewBox.innerHTML = `
+                <div style="padding:15px; background:#fef2f2; border-radius:10px; color:#991b1b; font-weight:bold;">
+                ❌ No portfolio projects found for AI analysis.
+                </div>
+                `;
+                return;
+            }
+            let feedback = new Set();
+            projects.forEach(project => {
+                let text = project.innerText;
+                if(text.length < 180) {
+                    feedback.add("Your project descriptions are too short.");
+                }
+                if(!project.querySelector('a')) {
+                    feedback.add("Missing live project links in some portfolio items.");
+                }
+                if(
+                !text.toLowerCase().includes("%") &&
+                !text.toLowerCase().includes("users") &&
+                !text.toLowerCase().includes("improved") &&
+                !text.toLowerCase().includes("reduced")
+                ) {
+                    feedback.add("Add measurable outcomes and project impact.");
+                }
+            });
+            if(feedback.size === 0) {
+                feedback.add("Excellent portfolio structure with strong technical depth.");
+            }
+            reviewBox.innerHTML = `
+            <div style="padding:20px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px;">
+                <h4 style="margin-top:0; color:#1d4ed8;">🤖 AI Portfolio Review</h4>
+                ${[...feedback].map(f => `
+                    <p style="margin-bottom:10px;">• ${f}</p>
+                `).join('')}
+            </div>
+            `;
+        }
+
+        function openChat(email) {
+            let existing = document.getElementById('chat-modal');
+            if(existing) {
+                existing.remove();
+            }
+            let modal = document.createElement('div');
+            modal.id = 'chat-modal';
+            modal.style.position = 'fixed';
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.width = '400px';
+            modal.style.background = 'white';
+            modal.style.borderRadius = '12px';
+            modal.style.padding = '20px';
+            modal.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+            modal.style.zIndex = '9999';
+            let chatKey = `chat_${email}`;
+            let messages = JSON.parse(localStorage.getItem(chatKey)) || [];
+            modal.innerHTML = `
+                <h3 style="margin-top:0;">💬 Chat with ${email}</h3>
+                <div id="chat-messages"
+                style="height:250px; overflow-y:auto; border:1px solid #e2e8f0; padding:10px; border-radius:8px; margin-bottom:15px; background:#f8fafc;">
+                </div>
+                <input type="text"
+                id="chat-input"
+                placeholder="Type message..."
+                style="width:100%; padding:10px; border-radius:6px; border:1px solid #cbd5e1; margin-bottom:10px;">
+                <div style="display:flex; gap:10px;">
+                    <button onclick="sendMessage('${email}')"
+                    class="action-btn"
+                    style="flex:1;">
+                    Send
+                    </button>
+                    <button onclick="closeChat()"
+                    style="flex:1; background:#ef4444; color:white; border:none; border-radius:8px;">
+                    Close
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            renderMessages(email);
+        }
+
+        function sendMessage(email) {
+            let input = document.getElementById('chat-input');
+            if(input.value.trim() === '') return;
+            let chatKey = `chat_${email}`;
+            let messages = JSON.parse(localStorage.getItem(chatKey)) || [];
+            messages.push({
+                sender: currentUserRole,
+                text: input.value
+            });
+            localStorage.setItem(chatKey, JSON.stringify(messages));
+            input.value = '';
+            renderMessages(email);
+        }
+
+        function renderMessages(email) {
+            let chatKey = `chat_${email}`;
+            let messages = JSON.parse(localStorage.getItem(chatKey)) || [];
+            let container = document.getElementById('chat-messages');
+            if(!container) return;
+            container.innerHTML = '';
+            messages.forEach(msg => {
+                let div = document.createElement('div');
+                div.style.marginBottom = '10px';
+                div.style.padding = '10px';
+                div.style.borderRadius = '8px';
+                if(msg.sender === currentUserRole) {
+                    div.style.background = '#dbeafe';
+                    div.style.textAlign = 'right';
+                } else {
+                    div.style.background = '#dcfce7';
+                }
+                div.innerHTML = `
+                    <strong>${msg.sender}</strong><br>
+                    ${msg.text}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function closeChat() {
+            let modal = document.getElementById('chat-modal');
+            if(modal) {
+                modal.remove();
+            }
+        }
+        
+        let currentSkill = '';
+
+        function startSkillTest() {
+            currentSkill = document.getElementById("skill-select").value;
+            document.getElementById("skill-test-area").style.display = "block";
+            if(currentSkill === "React") {
+                document.getElementById("mcq-question").innerHTML =
+                "MCQ: Which hook is used for state management in React?";
+                document.getElementById("practical-question").innerHTML =
+                "Practical: Explain how you would optimize a React component.";
+            }
+            if(currentSkill === "Python") {
+                document.getElementById("mcq-question").innerHTML =
+                "MCQ: What does PEP stand for in Python?";
+                document.getElementById("practical-question").innerHTML =
+                "Practical: Explain list comprehensions with an example.";
+            }
+            if(currentSkill === "SQL") {
+                document.getElementById("mcq-question").innerHTML =
+                "MCQ: Which SQL clause is used to filter records?";
+                document.getElementById("practical-question").innerHTML =
+                "Practical: Write a query explanation using JOIN.";
+            }
+        }
+
+        function submitSkillTest() {
+            let mcq = document.getElementById("mcq-answer").value.toLowerCase();
+            let practical = document.getElementById("practical-answer").value;
+            let score = 0;
+            if(
+            (currentSkill === "React" && mcq.includes("usestate")) ||
+            (currentSkill === "Python" && mcq.includes("python enhancement")) ||
+            (currentSkill === "SQL" && mcq.includes("where"))
+            ) {
+                score += 50;
+            }
+            if(practical.length > 40) {
+                score += 50;
+            }
+            if(score >= 70) {
+                document.getElementById("badge-result").innerHTML = `
+                <div style="padding:15px; background:#ecfdf5; border:1px solid #bbf7d0; border-radius:8px; color:#166534; font-weight:bold;">
+                ✅ AI VERIFIED BADGE EARNED
+                <br><br>
+                🏆 Verified ${currentSkill} Developer
+                </div>
+                `;
+            } else {
+                document.getElementById("badge-result").innerHTML = `
+                <div style="padding:15px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; color:#991b1b; font-weight:bold;">
+                ❌ Verification Failed
+                </div>
+                `;
+            }
+        }
+        
+        function uploadDeliverable(jobId, numAmount, email) {
+            alert("✅ Deliverable uploaded successfully for Job #" + jobId);
+            let statusText = document.getElementById('status-' + jobId);
+            statusText.innerHTML = "Deliverable Submitted 📦";
+            statusText.style.color = "#2563eb";
+            let payBtn = document.getElementById('pay-btn-' + jobId);
+            if(payBtn) {
+                payBtn.disabled = false;
+                payBtn.style.background = "#10b981";
+                payBtn.style.cursor = "pointer";
+                payBtn.onclick = function() {
+                    releasePayment(jobId, numAmount, email);
+                };
+            }
+        }
+
+        function postToFeed() {
+            let input = document.getElementById('feed-input');
+            if(!input.value) return;
+            let feed = document.getElementById('feed-posts');
+            let newPost = document.createElement('div');
+            newPost.style = "background: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;";
+            newPost.innerHTML = `<strong>You:</strong> ${input.value}`;
+            feed.prepend(newPost);
+            input.value = "";
+        }
+
+        window.addEventListener('storage', function(e) {
+            if(e.key && e.key.startsWith('nodehire_financials_')) {
+                if(currentUserRole === 'freelancer' || currentUserRole === 'both') {
+                    updateEarningsUI();
+                }
+            }
+        });
     </script>
+    
+    <div id="assessment-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:400px; background:white; padding:25px; box-shadow:0px 10px 30px rgba(0,0,0,0.5); border-radius:12px; z-index:1000;">
+        <h3>React Developer Quiz</h3>
+        <p>Q: What is a Hook in React?</p>
+        <select id="quiz-ans" style="width:100%; padding:10px;">
+            <option value="wrong">A function to fetch data</option>
+            <option value="right">A function to use state/lifecycle features</option>
+        </select>
+        <button onclick="submitQuiz()" style="width:100%; margin-top:15px; padding:10px; background:#2563eb; color:white; border:none; border-radius:5px; cursor:pointer;">Submit for AI Review</button>
+        <button onclick="document.getElementById('assessment-modal').style.display='none'" style="width:100%; margin-top:10px; padding:10px; background:none; color:#64748b; border:none; cursor:pointer;">Cancel</button>
+    </div>
+
+    <div id="portfolio-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:400px; background:white; padding:25px; box-shadow:0px 10px 30px rgba(0,0,0,0.5); border-radius:12px; z-index:1000; border-top: 5px solid #8b5cf6;">
+        <h3 id="port-email">Portfolio</h3>
+        <div id="portfolio-dynamic-content"></div>
+        <button onclick="document.getElementById('portfolio-modal').style.display='none'" style="width: 100%; background: #ef4444; color: white; border: none; padding: 10px; border-radius:5px; margin-top:15px; cursor:pointer;">Close</button>
+    </div>
+
+    <div id="checkout-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:380px; background:white; padding:25px; box-shadow:0px 10px 30px rgba(0,0,0,0.5); border-radius:12px; z-index:1000; border-top: 5px solid #6366f1;">
+        <h3>Escrow Checkout</h3>
+        <p>Milestone: $<span id="checkout-bid"></span></p>
+        <p>Fee: $<span id="checkout-fee"></span></p>
+        <p>Total: $<span id="checkout-total"></span></p>
+        <input type="text" id="stripe-card-num" placeholder="4242 4242 4242 4242">
+        <button id="stripe-btn" onclick="processStripePayment()" style="width:100%; background:#6366f1; color: white; border: none; padding: 10px; border-radius:5px; cursor:pointer; margin-top:10px;">Pay Securely</button>
+        <button onclick="document.getElementById('checkout-modal').style.display='none'" style="width:100%; background:none; color:#64748b; border:none; cursor:pointer; margin-top:10px;">Cancel</button>
+    </div>
+
 </body>
 </html>
